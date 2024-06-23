@@ -1,6 +1,6 @@
 # Conductor
 
-# Table of Contents  
+## Table of Contents  
 - [Introduction](#introduction)  
 - [Setup](#setup)  
 - [Components](#components)
