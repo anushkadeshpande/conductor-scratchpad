@@ -1,7 +1,7 @@
 # Conductor
 
 
-### Introduction
+## Introduction
 
 Conductor is a free and open-source microservice orchestration software platform originally developed by Netflix.
 
@@ -20,7 +20,7 @@ Basically, we can define tasks, and multiple `tasks` can be connected in a `work
 
 <hr>
 
-### Setup:
+## Setup:
 
 Netflix Conductor Server is a Spring Boot application packaged as JAR file. It will run with embedded tomcat server on port 8080.
 
@@ -35,6 +35,7 @@ java -jar conductor-server-3.3.4-boot.jar
 Swagger UI of the Conductor server can be accessed via:<br>
 http://localhost:8080/swagger-ui/index.html?configUrl=%2Fapi-docs%2Fswagger-config
 
+<hr>
 
 #### UI
 
@@ -52,3 +53,8 @@ yarn run start
 ```
 
 The web application can be accessed via localhost:5000
+<hr>
+
+> By default in-memory persistence is used, so any workflows created or executed will be wiped out once the server is terminated
+> 
+> Check this for Docker Installation https://conductor-oss.github.io/conductor/devguide/running/docker.html
