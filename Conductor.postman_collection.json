@@ -1,0 +1,45 @@
+{
+	"info": {
+		"_postman_id": "794a6882-0064-4761-b5bb-e7b36f41b41a",
+		"name": "Conductor",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27513215"
+	},
+	"item": [
+		{
+			"name": "create-workflow",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"GetUserCandies2\",\r\n  \"version\": 1,\r\n  \"schemaVersion\": 1,\r\n  \"description\": \"Test workflow\",\r\n  \"tasks\": [\r\n    {\r\n      \"name\": \"GetUserId\",\r\n      \"taskReferenceName\": \"getuserid\",\r\n      \"type\": \"HTTP\",\r\n      \"inputParameters\": {\r\n        \"http_request\": {\r\n          \"uri\": \"http://192.168.56.1:8756/getUserId\",\r\n          \"method\": \"POST\",\r\n          \"connectionTimeOut\": \"6000\",\r\n          \"readTimeOut\": 6000,\r\n          \"contentType\": \"application/json\",\r\n          \"accept\": \"application/json\",\r\n          \"body\": \"${workflow.input}\"\r\n        }\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"shouldFetchFavCandies\",\r\n      \"taskReferenceName\": \"shouldFetchFavCandies\",\r\n      \"type\": \"SWITCH\",\r\n      \"evaluatorType\": \"javascript\",\r\n      \"inputParameters\": {\r\n        \"responseCode\": \"${getuserid.output.response.statusCode}\"\r\n      },\r\n      \"expression\": \"$.responseCode == 200? 'fetchfavcandies' : 'end'\",\r\n      \"decisionCases\": {\r\n        \"fetchfavcandies\": [\r\n          {\r\n            \"name\": \"GetFavCandies\",\r\n            \"taskReferenceName\": \"getfavcandies\",\r\n            \"type\": \"HTTP\",\r\n            \"inputParameters\": {\r\n              \"http_request\": {\r\n                \"uri\": \"http://192.168.56.1:8756/getFavCandies\",\r\n                \"method\": \"POST\",\r\n                \"connectionTimeOut\": \"6000\",\r\n                \"readTimeOut\": 6000,\r\n                \"contentType\": \"application/json\",\r\n                \"accept\": \"application/json\",\r\n                \"body\": {\r\n                  \"userId\": \"${getuserid.output.response.body.id}\"\r\n                }\r\n              }\r\n            }\r\n          },\r\n          {\r\n            \"name\": \"getNumberOfCandies\",\r\n            \"taskReferenceName\": \"getNumberOfCandies\",\r\n            \"type\": \"INLINE\",\r\n            \"inputParameters\": {\r\n              \"candies\": \"${getfavcandies.output.response.body}\",\r\n              \"evaluatorType\": \"javascript\",\r\n              \"expression\": \"function getCandyNum(){var candies = $.candies; return candies.length} getCandyNum()\"\r\n            },\r\n            \"decisionCases\": {},\r\n            \"defaultCase\": [],\r\n            \"forkTasks\": [],\r\n            \"startDelay\": 0,\r\n            \"joinOn\": [],\r\n            \"optional\": false,\r\n            \"defaultExclusiveJoinTask\": [],\r\n            \"asyncComplete\": false,\r\n            \"loopOver\": [],\r\n            \"onStateChange\": {}\r\n          },\r\n          {\r\n            \"name\": \"shouldCallFinalAPI\",\r\n            \"taskReferenceName\": \"shouldCallFinalAPI\",\r\n            \"inputParameters\": {\r\n              \"inputValue\": \"${getNumberOfCandies.output.result}\"\r\n            },\r\n            \"type\": \"SWITCH\",\r\n            \"evaluatorType\": \"javascript\",\r\n            \"expression\": \"$.inputValue % 2 == 0? 'finalApi' : 'end_inner'\",\r\n            \"decisionCases\": {\r\n              \"finalApi\": [\r\n                {\r\n                  \"name\": \"callFinalApi\",\r\n                  \"taskReferenceName\": \"callFinalApi\",\r\n                  \"inputParameters\": {\r\n                    \"http_request\": {\r\n                      \"uri\": \"http://192.168.56.1:8756\",\r\n                      \"method\": \"GET\",\r\n                      \"connectionTimeout\": 60000,\r\n                      \"readTimeOut\": 60000,\r\n                      \"contentType\": \"application/json\"\r\n                    },\r\n                    \"asyncComplete\": false\r\n                  },\r\n                  \"type\": \"HTTP\",\r\n                  \"decisionCases\": {},\r\n                  \"defaultCase\": [],\r\n                  \"forkTasks\": [],\r\n                  \"startDelay\": 0,\r\n                  \"joinOn\": [],\r\n                  \"optional\": false,\r\n                  \"defaultExclusiveJoinTask\": [],\r\n                  \"asyncComplete\": false,\r\n                  \"loopOver\": [],\r\n                  \"cacheKey\": {},\r\n                  \"cacheTTL\": 0,\r\n                  \"onStateChange\": {}\r\n                }\r\n              ],\r\n              \"end_inner\": [\r\n                {\r\n                  \"name\": \"EndWorkflowInner\",\r\n                  \"taskReferenceName\": \"endWorkflowInner\",\r\n                  \"type\": \"TERMINATE\",\r\n                  \"inputParameters\": {\r\n                    \"terminationStatus\": \"COMPLETED\"\r\n                  }\r\n                }\r\n              ]\r\n            }\r\n          }\r\n        ],\r\n        \"end\": [\r\n          {\r\n            \"name\": \"EndWorkflow\",\r\n            \"taskReferenceName\": \"endWorkflow\",\r\n            \"type\": \"TERMINATE\",\r\n            \"inputParameters\": {\r\n              \"terminationStatus\": \"COMPLETED\"\r\n            }\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  ],\r\n  \"outputParameters\": {\r\n    \"candies\": \"${getfavcandies.output.response.body}\",\r\n    \"FinalRespone\": \"${callFinalApi.output.response}\"\r\n  },\r\n  \"ownerEmail\": \"example@example.com\",\r\n  \"failureStrategy\": \"FAIL_TASK\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/metadata/workflow",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"metadata",
+						"workflow"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
