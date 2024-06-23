@@ -1,0 +1,30 @@
+{
+  "name": "UserCandies",
+  "version": 1,
+  "description": "Test workflow",
+  "tasks": [
+    {
+      "name": "GetUserId",
+      "taskReferenceName": "getuserid",
+      "type": "HTTP",
+      "inputParameters": {
+        "http_request" : {
+          "uri": "http://localhost:8756/getUserId",
+          "method": "POST",
+          "connectionTimeOut": "6000",
+          "readTimeOut": 6000,
+          "contentType": "application/json",
+          "accept": "application/json",
+          "body": {
+            "username": "Anna"
+          }
+        }
+      }
+    }
+  ],
+  "outputParameters": {
+    "userId": "${getuserid.output.response.body.id}"
+  },
+  "ownerEmail": "example@example.com",
+  "failureStrategy": "FAIL_TASK"
+}
