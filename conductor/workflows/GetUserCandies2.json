@@ -1,0 +1,142 @@
+{
+  "name": "GetUserCandies2",
+  "version": 6,
+  "description": "Test workflow",
+  "tasks": [
+    {
+      "name": "GetUserId",
+      "taskReferenceName": "getuserid",
+      "type": "HTTP",
+      "inputParameters": {
+        "http_request": {
+          "uri": "http://localhost:8756/getUserId",
+          "method": "POST",
+          "connectionTimeOut": "6000",
+          "readTimeOut": 6000,
+          "contentType": "application/json",
+          "accept": "application/json",
+          "body": "${workflow.input}"
+        }
+      }
+    },
+    {
+      "name": "shouldFetchFavCandies",
+      "taskReferenceName": "shouldFetchFavCandies",
+      "type": "SWITCH",
+      "evaluatorType": "javascript",
+      "inputParameters": {
+        "responseCode": "${getuserid.output.response.statusCode}"
+      },
+      "expression": "$.responseCode == 200? 'fetchfavcandies' : 'end'",
+      "decisionCases": {
+        "fetchfavcandies": [
+          {
+            "name": "GetFavCandies",
+            "taskReferenceName": "getfavcandies",
+            "type": "HTTP",
+            "inputParameters": {
+              "http_request": {
+                "uri": "http://localhost:8756/getFavCandies",
+                "method": "POST",
+                "connectionTimeOut": "6000",
+                "readTimeOut": 6000,
+                "contentType": "application/json",
+                "accept": "application/json",
+                "body": {
+                  "userId": "${getuserid.output.response.body.id}"
+                }
+              }
+            }
+          },
+          {
+            "name": "getNumberOfCandies",
+            "taskReferenceName": "getNumberOfCandies",
+            "type": "INLINE",
+            "inputParameters": {
+              "candies": "${getfavcandies.output.response.body}",
+              "evaluatorType": "javascript",
+              "expression": "function getCandyNum(){var candies = $.candies; return candies.length} getCandyNum()"
+            },
+            "decisionCases": {},
+            "defaultCase": [],
+            "forkTasks": [],
+            "startDelay": 0,
+            "joinOn": [],
+            "optional": false,
+            "defaultExclusiveJoinTask": [],
+            "asyncComplete": false,
+            "loopOver": [],
+            "onStateChange": {}
+          },
+          {
+            "name": "shouldCallFinalAPI",
+            "taskReferenceName": "shouldCallFinalAPI",
+            "inputParameters": {
+              "inputValue": "${getNumberOfCandies.output.result}"
+            },
+            "type": "SWITCH",
+            "evaluatorType": "javascript",
+            "expression": "$.inputValue % 2 == 0? 'finalApi' : 'end_inner'",
+            "decisionCases": {
+              "finalApi": [
+                {
+                  "name": "callFinalApi",
+                  "taskReferenceName": "callFinalApi",
+                  "inputParameters": {
+                    "http_request": {
+                      "uri": "http://localhost:8756",
+                      "method": "GET",
+                      "connectionTimeout": 60000,
+                      "readTimeOut": 60000,
+                      "contentType": "application/json"
+                    },
+                    "asyncComplete": false
+                  },
+                  "type": "HTTP",
+                  "decisionCases": {},
+                  "defaultCase": [],
+                  "forkTasks": [],
+                  "startDelay": 0,
+                  "joinOn": [],
+                  "optional": false,
+                  "defaultExclusiveJoinTask": [],
+                  "asyncComplete": false,
+                  "loopOver": [],
+                  "cacheKey": {},
+                  "cacheTTL": 0,
+                  "onStateChange": {}
+                }
+              ],
+              "end_inner": [
+                {
+                  "name": "EndWorkflowInner",
+                  "taskReferenceName": "endWorkflowInner",
+                  "type": "TERMINATE",
+                  "inputParameters": {
+                    "terminationStatus": "COMPLETED"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "end": [
+          {
+            "name": "EndWorkflow",
+            "taskReferenceName": "endWorkflow",
+            "type": "TERMINATE",
+            "inputParameters": {
+              "terminationStatus": "COMPLETED"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputParameters": {
+    "candies": "${getfavcandies.output.response.body}",
+    "FinalRespone": "${callFinalApi.output.response}"
+  },
+  "ownerEmail": "example@example.com",
+  "failureStrategy": "FAIL_TASK"
+}

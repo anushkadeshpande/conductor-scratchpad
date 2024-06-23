@@ -1,0 +1,46 @@
+{
+  "name": "GetUserCandies",
+  "version": 1,
+  "description": "Test workflow",
+  "tasks": [
+    {
+      "name": "GetUserId",
+      "taskReferenceName": "getuserid",
+      "type": "HTTP",
+      "inputParameters": {
+        "http_request": {
+          "uri": "http://localhost:8756/getUserId",
+          "method": "POST",
+          "connectionTimeOut": "6000",
+          "readTimeOut": 6000,
+          "contentType": "application/json",
+          "accept": "application/json",
+          "body": "${workflow.input}"
+        }
+      }
+    },
+    {
+      "name": "GetFavCandies",
+      "taskReferenceName": "getfavcandies",
+      "type": "HTTP",
+      "inputParameters": {
+        "http_request": {
+          "uri": "http://localhost:8756/getFavCandies",
+          "method": "POST",
+          "connectionTimeOut": "6000",
+          "readTimeOut": 6000,
+          "contentType": "application/json",
+          "accept": "application/json",
+          "body": {
+            "userId": "${getuserid.output.response.body.id}"
+          }
+        }
+      }
+    }
+  ],
+  "outputParameters": {
+    "candies": "${getfavcandies.output.response.body}"
+  },
+  "ownerEmail": "example@example.com",
+  "failureStrategy": "FAIL_TASK"
+}
