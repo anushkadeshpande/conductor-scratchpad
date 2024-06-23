@@ -1,5 +1,12 @@
 # Conductor
 
+# Table of Contents  
+- [Introduction](#introduction)  
+- [Setup](#setup)  
+- [Components](#components)
+  - [Tasks](#tasks)
+      - [Inline Task](#inline-task)
+      - [Switch Task](#switch-task)
 
 ## Introduction
 
@@ -20,7 +27,7 @@ Basically, we can define tasks, and multiple `tasks` can be connected in a `work
 
 <hr>
 
-## Setup:
+## Setup
 
 Netflix Conductor Server is a Spring Boot application packaged as JAR file. It will run with embedded tomcat server on port 8080.
 
@@ -58,3 +65,23 @@ The web application can be accessed via localhost:5000
 > By default in-memory persistence is used, so any workflows created or executed will be wiped out once the server is terminated
 > 
 > Check this for Docker Installation https://conductor-oss.github.io/conductor/devguide/running/docker.html
+
+<hr>
+
+## Components
+
+### Tasks
+
+#### Inline Task
+The `inline task` helps execute logic at runtime using an evaluator. This logic is written in `JavaScript`.
+
+#### Switch Task
+This task is similar to `switch...case`. There are two types of evaluators: <br>
+- value-param
+- javascript
+
+Check this for more info: https://conductor-oss.github.io/conductor/documentation/configuration/workflowdef/operators/switch-task.html#evaluator-types-and-expression
+
+In either case, the expression is evaluated (this could be a reference to `inputParameters`, or a more complex JS expression), and the appropriate task is executed based on the output of the expression and the `decisionCases` defined in the task configuration.
+
+Check this page for workflow definition properties: https://conductor-oss.github.io/conductor/documentation/configuration/workflowdef/index.html
