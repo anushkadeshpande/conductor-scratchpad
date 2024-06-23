@@ -1,1 +1,1 @@
-![image](https://github.com/anushkadeshpande/conductor/assets/53345232/f9ff367c-2e5e-43b1-bfae-4db54216d1a2)
+![image](https://github.com/anushkadeshpande/conductor/assets/53345232/76025313-d31b-4eaa-9b66-d003881b7b76)
