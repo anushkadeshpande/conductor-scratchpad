@@ -21,3 +21,9 @@ docker run --init -p 8080:8080 -p 1234:5000 --mount source=redis,target=/redis -
 
 
 > FYI, this is the Dockerfile used for building the Orkes conductor image : https://github.com/orkes-io/orkes-conductor-community/blob/main/docker/DockerfileStandalone
+
+
+Also, if you want to get the conductor server jar from the docker container, you can use the following command:
+```
+docker cp <container-id>:/app/libs/server.jar .
+```
