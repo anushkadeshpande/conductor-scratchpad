@@ -9,8 +9,9 @@ app.get("/", (req, res) => {
   res.send("Hiiii")
 })
 
-app.get("/getUserId", (req, res) => {
+app.post("/getUserId", (req, res) => {
   try {
+    console.log("REQUEST: ", req.body)
     const username = req.body.username
 
     let user = userData.users.filter(user => user.name == username)[0]
@@ -24,8 +25,9 @@ app.get("/getUserId", (req, res) => {
   }
 })
 
-app.get("/getFavCandies", (req, res) => {
+app.post("/getFavCandies", (req, res) => {
   try {
+    console.log("REQUEST: ", req.body)
     if(!req.body || !req.body.userId)
       throw Error('Invalid request!')
 
